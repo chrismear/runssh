@@ -124,14 +124,19 @@ describe "The CLI interface" do
 
         # somehow this doesn't work. It shouldn't really run the "shell"
         # method so it shouldn't exit.
-        # it "should correctly initialize SshBackend" do
-        #   mock_ssh_backend = double('SshBackend')
-        #   mock_ssh_backend.should_receive(:shell)
-        #   RunSSHLib::SshBackend.should_receive(:new).
-        #                         and_return(mock_ssh_backend)
-        #   cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} shell cust2 dc somehost))
-        #   cli.run
-        # end
+        it "should correctly initialize SshBackend" do
+          mock_ssh_backend = double('SshBackend')
+          mock_ssh_backend.should_receive(:shell)
+          RunSSHLib::SshBackend.should_receive(:new).
+                                and_return(mock_ssh_backend)
+          
+          mock_host = double('host')
+          mock_config_file = double('ConfigFile', :get_host => mock_host)
+          RunSSHLib::ConfigFile.stub!(:new).and_return(mock_config_file)
+          
+          cli = RunSSHLib::CLI.new(%W(-f #{TMP_FILE} shell cust2 dc somehost))
+          cli.run
+        end
       end
 
       describe "add" do
